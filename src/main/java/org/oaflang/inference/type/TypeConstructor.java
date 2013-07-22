@@ -1,9 +1,9 @@
-package org.oaf.inference.type;
+package org.oaflang.inference.type;
 
 import java.util.Map;
 import java.util.Set;
 
-import org.oaf.inference.Inference;
+import org.oaflang.inference.Inference;
 
 public class TypeConstructor extends Type {
 
@@ -71,5 +71,23 @@ public class TypeConstructor extends Type {
 	@Override
 	public String toString() {
 		return toString(false);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof TypeVariable)
+			obj = ((TypeVariable)obj).prune();
+
+		if (!(obj instanceof TypeConstructor))
+			return false;
+
+		TypeConstructor that = (TypeConstructor) obj;
+		if (!this.name.equals(that.name) || this.types.length != that.types.length)
+			return false;
+		for (int i = 0; i < this.types.length; i++)
+			if (!this.types[i].equals(that.types[i]))
+				return false;
+		
+		return true;
 	}
 }

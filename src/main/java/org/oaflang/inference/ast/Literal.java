@@ -1,11 +1,11 @@
-package org.oaf.inference.ast;
+package org.oaflang.inference.ast;
 
 import java.util.Map;
 import java.util.Set;
 
-import org.oaf.inference.Inference;
-import org.oaf.inference.type.Type;
-import org.oaf.inference.type.TypeVariable;
+import org.oaflang.inference.Inference;
+import org.oaflang.inference.type.Type;
+import org.oaflang.inference.type.TypeVariable;
 
 /**
  * An integer literal

@@ -1,9 +1,9 @@
-package org.oaf.inference.type;
+package org.oaflang.inference.type;
 
 import java.util.Map;
 import java.util.Set;
 
-import org.oaf.inference.Inference;
+import org.oaflang.inference.Inference;
 
 /**
  * All type variables have their names assigned lazily when needed
@@ -99,5 +99,12 @@ public class TypeVariable extends Type {
 	@Override
 	public String toString() {
 		return toString(false);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (instance != null)
+			return instance.equals(obj);
+		return super.equals(obj);
 	}
 }

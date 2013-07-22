@@ -1,17 +1,16 @@
-package org.oaf.inference;
+package org.oaflang.inference;
 
-import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.oaf.inference.ast.Node;
-import org.oaf.inference.type.Arrow;
-import org.oaf.inference.type.Tuple;
-import org.oaf.inference.type.Type;
-import org.oaf.inference.type.TypeConstructor;
-import org.oaf.inference.type.TypeVariable;
+import org.oaflang.inference.ast.Node;
+import org.oaflang.inference.type.Arrow;
+import org.oaflang.inference.type.Tuple;
+import org.oaflang.inference.type.Type;
+import org.oaflang.inference.type.TypeConstructor;
+import org.oaflang.inference.type.TypeVariable;
 
 public class Inference {
 
@@ -39,16 +38,10 @@ public class Inference {
 		StandardEnv.put("cons", new Arrow(var1, new Arrow(listType, listType)));
 	}
 
-	public static void analyze(Node node) throws Exception {
+	public static Type analyze(Node node)  {
 		Set<TypeVariable> nonGenerics = new HashSet<>();
-		PrintStream out = new PrintStream(System.out, true, "UTF-8");
-		try {
-			nextVariableName = StartingVariableName;
-			Type t = node.getType(StandardEnv, nonGenerics);
-			out.println(node + " : " + t.toString(true));
-		} catch (IllegalArgumentException e) {
-			out.println(node + " : " + e.getMessage());
-		}
+		nextVariableName = StartingVariableName;
+		return node.getType(StandardEnv, nonGenerics);
 	}
 
 	/**
@@ -60,8 +53,7 @@ public class Inference {
 		t1.unify(t2);
 	}
 
-	// Greek letter alpha
-	private static final char StartingVariableName = '\u03b1';
+	private static final char StartingVariableName = 'a';
 	private static char nextVariableName = StartingVariableName;
 
 	public static char getNextVariableName() {

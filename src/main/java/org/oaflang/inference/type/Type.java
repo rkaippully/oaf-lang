@@ -1,4 +1,4 @@
-package org.oaf.inference.type;
+package org.oaflang.inference.type;
 
 import java.util.Map;
 import java.util.Set;

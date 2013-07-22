@@ -1,13 +1,13 @@
-package org.oaf.inference;
+package org.oaflang.inference;
 
-import org.oaf.inference.ast.Apply;
-import org.oaf.inference.ast.Identifier;
-import org.oaf.inference.ast.If;
-import org.oaf.inference.ast.Lambda;
-import org.oaf.inference.ast.Let;
-import org.oaf.inference.ast.LetRec;
-import org.oaf.inference.ast.Literal;
-import org.oaf.inference.ast.Node;
+import org.oaflang.inference.ast.Apply;
+import org.oaflang.inference.ast.Identifier;
+import org.oaflang.inference.ast.If;
+import org.oaflang.inference.ast.Lambda;
+import org.oaflang.inference.ast.Let;
+import org.oaflang.inference.ast.LetRec;
+import org.oaflang.inference.ast.Literal;
+import org.oaflang.inference.ast.Node;
 
 public class Main {
 
