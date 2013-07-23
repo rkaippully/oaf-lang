@@ -1,5 +1,4 @@
 An implementation of the HM type inference algorithm as specified by:
 
-BasicTypeChecking
-by
-Luca Cardelli
+Basic Polymorphic Typechecking (Luca Cardelli)
+http://lucacardelli.name/indexPapers.html
