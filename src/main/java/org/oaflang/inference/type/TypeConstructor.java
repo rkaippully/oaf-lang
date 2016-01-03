@@ -1,93 +1,96 @@
 package org.oaflang.inference.type;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.oaflang.inference.Inference;
+import org.oaflang.inference.TypeCheckException;
+import org.oaflang.inference.pprint.Precedence;
+import org.oaflang.inference.util.Lists;
+import org.oaflang.inference.util.Pair;
 
 public class TypeConstructor extends Type {
 
-	protected Type[] types;
 	private String name;
+	private List<? extends Type> args;
 
-	public TypeConstructor(String name, Type... types) {
+	public TypeConstructor(String name, List<? extends Type> args) {
 		this.name = name;
-		this.types = types;
+		this.args = args;
 	}
 
 	@Override
-	public Type freshType(Set<TypeVariable> nonGenerics,
-			Map<TypeVariable, TypeVariable> mappings) {
-		Type[] newTypes = new Type[types.length];
-		for (int i = 0; i < types.length; i++) {
-			newTypes[i] = types[i].freshType(nonGenerics, mappings);
-		}
-		return new TypeConstructor(name, newTypes);
-	}
-
-	/**
-	 * Checks if the specified type variable occurs in this type constructor.
-	 */
-	@Override
-	protected boolean contains(TypeVariable var) {
-		for (Type t : types)
-			if (t.contains(var))
-				return true;
-		return false;
+	protected void addMetaTypeVariables(List<MetaTypeVariable> acc) {
+		for (Type t : args)
+			t.addMetaTypeVariables(acc);
 	}
 
 	@Override
-	public void unify(Type t) {
-		if (t instanceof TypeVariable) {
-			t.unify(this);
-		} else if (t instanceof TypeConstructor) {
-			TypeConstructor that = (TypeConstructor) t;
-			if (!this.name.equals(that.name)
-					|| this.types.length != that.types.length)
-				throw new IllegalArgumentException("Type mismatch: "
-						+ this.toString(true) + " != " + that.toString(true));
-			for (int i = 0; i < this.types.length; i++)
-				Inference.unify(this.types[i], that.types[i]);
-		} else
-			super.unify(t);
+	protected void addFreeTypeVariables(List<TypeVariable> boundVars,
+			List<TypeVariable> acc) {
+		for (Type t : args)
+			t.addFreeTypeVariables(boundVars, acc);
 	}
 
 	@Override
-	public String toString(boolean withName) {
-		StringBuilder sb = new StringBuilder();
-		sb.append(this.name);
-		if (this.types.length > 0) {
-			sb.append('[');
-			for (int i = 0; i < this.types.length; i++) {
-				if (i > 0)
-					sb.append(", ");
-				sb.append(this.types[i].toString(withName));
-			}
-			sb.append(']');
-		}
+	protected void addTypeVariableBinders(List<TypeVariable> acc) {
+		for (Type t : args)
+			t.addTypeVariableBinders(acc);
+	}
+
+	@Override
+	protected Type doTypeVariableSubstitution(Map<TypeVariable, Type> env) {
+		List<Type> subs = new ArrayList<>(args.size());
+		for (Type t : args)
+			subs.add(t.doTypeVariableSubstitution(env));
+		return new TypeConstructor(name, subs);
+	}
+
+	@Override
+	Precedence getPrecedence() {
+		return Precedence.TypeConsPrecedence;
+	}
+
+	@Override
+	String doPrettyPrint() {
+		StringBuilder sb = new StringBuilder(name);
+		for (Type t : args)
+			sb.append(' ').append(t.prettyPrint());
 		return sb.toString();
 	}
 
 	@Override
-	public String toString() {
-		return toString(false);
+	public Pair<List<TypeVariable>, Type> skolemise() {
+		List<TypeVariable> tvs = new ArrayList<>();
+		List<Type> skolemised = new ArrayList<>(args.size());
+		for (Type t : args) {
+			Pair<List<TypeVariable>, Type> p = t.skolemise();
+			Lists.addAllIfAbsent(tvs, p.fst());
+			skolemised.add(p.snd());
+		}
+		return new Pair<List<TypeVariable>, Type>(tvs, new TypeConstructor(
+				name, skolemised));
 	}
 
 	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof TypeVariable)
-			obj = ((TypeVariable)obj).prune();
+	public Type zonk() {
+		List<Type> vars = new ArrayList<>(args.size());
+		for (Type t : args)
+			vars.add(t.zonk());
+		return new TypeConstructor(name, vars);
+	}
 
-		if (!(obj instanceof TypeConstructor))
-			return false;
-
-		TypeConstructor that = (TypeConstructor) obj;
-		if (!this.name.equals(that.name) || this.types.length != that.types.length)
-			return false;
-		for (int i = 0; i < this.types.length; i++)
-			if (!this.types[i].equals(that.types[i]))
+	@Override
+	protected boolean unifyInternal(Type that) throws TypeCheckException {
+		if (that instanceof TypeConstructor) {
+			TypeConstructor tc = (TypeConstructor) that;
+			if (this.args.size() != tc.args.size())
 				return false;
-		
-		return true;
+			for (int i = 0; i < this.args.size(); i++)
+				if (!this.args.get(i).unify(tc.args.get(i)))
+					return false;
+			return true;
+		}
+		return false;
 	}
 }
