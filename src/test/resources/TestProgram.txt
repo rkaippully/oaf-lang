@@ -1,0 +1,33 @@
+let
+    triangular = \n -> (/ (* n (+ n 1)) 2)
+in
+    triangular 5
+<> Int
+
+\x -> ((Pair (x 3)) (x True)) <> "Cannot unify types: Int != Bool"
+
+\x :: (forall a. (a -> a)) -> ((Pair (x 3)) (x True)) <> (forall a. (a -> a)) -> Pair Int Bool
+
+let f = \x -> x in ((Pair (f 4)) (f True)) <> Pair Int Bool
+
+((Pair (f 4)) (f True)) <> "Undefined symbol: f"
+
+\f -> (f f) <> "Occurs check failed for: $1 in: $1 -> $2"
+
+let g = \f -> 5 in g g <> Int
+
+\g -> (let f = (\x -> g) in ((Pair (f 3)) (f True))) <> (forall a. (a -> Pair a a))
+
+\f -> (\g -> (\arg -> (g (f arg)))) <> forall a b c. ((b -> c) -> ((c -> a) -> (b -> a)))
+
+let poly = (\f :: (forall a. (a -> a)) -> ((Pair (f 3)) (f True))) in (poly (\x -> x)) <> Pair Int Bool
+
+let
+    revapp = (\x -> (\f -> (f x)))
+in
+    let
+        poly = (\f :: (forall a. (a -> a)) -> ((Pair (f 3)) (f True)))
+    in
+        ((revapp (\x -> x) poly))
+<> "Type mismatch: a12 -> a12 is not as polymorphic as (forall a. a -> a)"
+

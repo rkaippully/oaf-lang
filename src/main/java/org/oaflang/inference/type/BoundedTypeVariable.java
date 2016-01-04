@@ -12,6 +12,11 @@ public class BoundedTypeVariable extends TypeVariable {
 	}
 
 	@Override
+	public int hashCode() {
+		return this.getName().hashCode();
+	}
+
+	@Override
 	public boolean equals(Object obj) {
 		BoundedTypeVariable that = (BoundedTypeVariable) obj;
 		return this.getName().equals(that.getName());

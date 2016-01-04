@@ -100,11 +100,26 @@ public class ForAll extends Type {
 
 	@Override
 	public Type zonk() {
-		return new ForAll(vars, rho.zonk());
+		return vars.isEmpty() ? rho.zonk() : new ForAll(vars, rho.zonk());
 	}
 
 	@Override
 	protected boolean unifyInternal(Type that) throws TypeCheckException {
 		return false;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		// This isn't entirely correct
+		if (obj instanceof ForAll) {
+			ForAll that = (ForAll) obj;
+			return this.vars.equals(that.vars) && this.rho.equals(that.rho);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return vars.hashCode() + rho.hashCode();
 	}
 }

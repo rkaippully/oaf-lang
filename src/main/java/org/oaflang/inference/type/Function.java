@@ -87,4 +87,18 @@ public class Function extends Type {
 	public Pair<Type, Type> unifyFunction() throws TypeCheckException {
 		return new Pair<Type, Type>(arg, result);
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Function) {
+			Function that = (Function) obj;
+			return this.arg.equals(that.arg) && this.result.equals(that.result);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return arg.hashCode() + result.hashCode();
+	}
 }

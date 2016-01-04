@@ -93,4 +93,18 @@ public class TypeConstructor extends Type {
 		}
 		return false;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof TypeConstructor) {
+			TypeConstructor that = (TypeConstructor) obj;
+			return this.name.equals(that.name) && this.args.equals(that.args);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return name.hashCode() + args.hashCode();
+	}
 }

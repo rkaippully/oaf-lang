@@ -27,7 +27,7 @@ public class Lambda extends Term {
 
 	@Override
 	public String prettyPrint() {
-		return "\\" + varName + ". " + body.prettyPrint();
+		return "\\" + varName + " -> " + body.prettyPrint();
 	}
 
 	@Override

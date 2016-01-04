@@ -37,6 +37,11 @@ public class TypeConstant extends Type {
 	}
 
 	@Override
+	public int hashCode() {
+		return this.name.hashCode();
+	}
+
+	@Override
 	protected boolean unifyInternal(Type that) throws TypeCheckException {
 		return this.equals(that);
 	}

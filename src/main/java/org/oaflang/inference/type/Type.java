@@ -228,4 +228,7 @@ public abstract class Type implements PrettyPrintable {
 		this.unify(new Function(argType, resType));
 		return new Pair<Type, Type>(argType, resType);
 	}
+
+	@Override
+	public abstract boolean equals(Object obj);
 }
